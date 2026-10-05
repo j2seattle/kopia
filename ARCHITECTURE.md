@@ -73,7 +73,7 @@ The web UI is for Jason. Backup jobs are systemd timers on each client.
 | Direct | `https://192.168.30.32:51515`, self-signed certificate. Clients pin its SHA-256 |
 | Cloudflare | None. Internal only |
 
-The browser login is HTTP basic auth. Username `kopia`. There is no form on the page. See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+The browser login is a form served by `kopia-ui-proxy` on port 51516. NPM host 51 forwards there. Username `kopia`. The proxy checks that password with Kopia and keeps the session in a cookie. See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
 Homarr app `m8on29qotzh2pv73vc5zvyua` is on YingsonDash only. It is not on Lab-Dashboard. Ping URL is blank: the UI returns 401 until login, and the guest certificate is self-signed, so a Homarr ping would show the tile down while the service is fine. Kuma owns reachability.
 

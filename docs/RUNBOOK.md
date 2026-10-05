@@ -2,9 +2,11 @@
 
 ## Sign in
 
-1. Open https://kopia.yingson.com in a new browser tab.
-2. When the browser asks, username `kopia`.
+1. Open https://kopia.yingson.com.
+2. Username `kopia`.
 3. Password is `KOPIA_SERVER_PASSWORD` in `C:\Users\thedu\.cursor\mcps\kopia.env`.
+
+The form is `kopia-ui-proxy` on port 51516. Kopia itself stays on 51515. Restart the form with `systemctl restart kopia-ui-proxy` inside CT 135. An unauthenticated request to the name should be the sign-in page, not the words `Missing credentials.`
 
 Do not paste the password into chat.
 
@@ -16,7 +18,7 @@ From the laptop, no sudo on Windows. The remote command uses sudo on the hypervi
 ssh jason@proxmox "sudo pct exec 135 -- systemctl restart kopia-server"
 ```
 
-Then confirm `systemctl is-active kopia-server` prints `active`. An unauthenticated request to the name should be HTTP 401 with `WWW-Authenticate: Basic realm="Kopia"`.
+Then confirm `systemctl is-active kopia-server` and `systemctl is-active kopia-ui-proxy` both print `active`. An unauthenticated request to the name should be the sign-in page.
 
 ## Where the repository is
 

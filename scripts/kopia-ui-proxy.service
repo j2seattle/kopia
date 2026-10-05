@@ -1,0 +1,14 @@
+[Unit]
+Description=Kopia UI sign-in page
+After=kopia-server.service
+Requires=kopia-server.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/sbin/kopia-ui-proxy.py
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

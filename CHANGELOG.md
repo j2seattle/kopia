@@ -22,6 +22,10 @@ last_verified: 2026-10-05
 
 # Changelog
 
+## [Unreleased]
+
+- Sign-in form in front of the UI. Chrome was showing Kopia's `Missing credentials.` page and never the basic-auth prompt. NPM host 51 now forwards to `kopia-ui-proxy` on port 51516.
+
 ## [0.1.0] — 2026-10-05
 
 - Initial service repo. CT 135, NPM host 51, Homarr tile on YingsonDash, Kuma 113 and 114.

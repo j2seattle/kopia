@@ -25,13 +25,11 @@ last_verified: 2026-10-05
 
 ## The site says "Missing credentials."
 
-That sentence is the body of an HTTP 401. Kopia did not receive a username. It does not mean the password in Dashlane was rejected.
+That text is Kopia's own 401 page. Chrome on this laptop does not show the browser login box, so that page was all there was to see. It does not mean the password was rejected.
 
-The sign-in is the browser's own username/password prompt, not a form on the page. Username is `kopia`. The password is `KOPIA_SERVER_PASSWORD` in `C:\Users\thedu\.cursor\mcps\kopia.env`. That file matches `/etc/kopia/server.password` on CT 135 (checked 2026-10-05, values not recorded here).
+https://kopia.yingson.com now serves a sign-in form (CT 135, `kopia-ui-proxy` on port 51516, NPM host 51). Username `kopia`. Password is `KOPIA_SERVER_PASSWORD` in `C:\Users\thedu\.cursor\mcps\kopia.env`, vault `vault://dashlane/yingson-labs/kopia/server-password`. A wrong password stays on the form and says the credentials were not accepted.
 
-If the prompt never appears, open a private window and go to https://kopia.yingson.com. A cancelled prompt stays cancelled until the tab is closed. A password manager can swallow the prompt and leave this sentence on the page.
-
-A wrong password is a different page: `Access denied.`
+Reload the tab. The old 401 text is not the form.
 
 ## The prompt appears and then says "Access denied."
 

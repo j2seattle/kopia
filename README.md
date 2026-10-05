@@ -4,7 +4,7 @@ File-level backup repository server for Yingson Labs. Clients push. The reposito
 
 **UI:** https://kopia.yingson.com
 
-The page is HTTP basic auth. Username `kopia`. The password is `KOPIA_SERVER_PASSWORD` in `C:\Users\thedu\.cursor\mcps\kopia.env` and Dashlane `vault://dashlane/yingson-labs/kopia/server-password`. The plain text `Missing credentials.` means the browser did not send a username. It is not a rejected password.
+Sign in on the form. Username `kopia`. The password is `KOPIA_SERVER_PASSWORD` in `C:\Users\thedu\.cursor\mcps\kopia.env` and Dashlane `vault://dashlane/yingson-labs/kopia/server-password`.
 
 **Host:** CT 135, `192.168.30.32`, Kopia 0.23.1 (held).
 
