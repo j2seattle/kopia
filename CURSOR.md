@@ -27,8 +27,7 @@ CT 135 (`192.168.30.32`) runs Kopia 0.23.1. The repository is `/volume1/proxmox/
 
 ## Current state
 
-- UI: `https://kopia.yingson.com` (NPM host 51). Browser login is HTTP basic auth, username `kopia`.
-- Unauthenticated response body is `Missing credentials.` That means no username was sent.
+- UI: `https://kopia.yingson.com` (NPM host 51 forwards to port 51516). Sign-in form, username `kopia`. `kopia-ui-proxy` adds basic auth toward Kopia on 51515.
 - Homarr app `m8on29qotzh2pv73vc5zvyua` is on YingsonDash. Ping is blank because the UI returns 401 until login. Kuma 113 and 114 are the reachability checks.
 - No git checkout on the guest. Outbound deploy key is n-a.
 - No agent token. Snapshot delete is destructive.
