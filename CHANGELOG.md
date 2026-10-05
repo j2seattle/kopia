@@ -24,6 +24,8 @@ last_verified: 2026-10-05
 
 ## [Unreleased]
 
+- The sign-in proxy now forwards Kopia's CSRF cookies and `X-Kopia-Csrf-Token`. Without them the UI shell loaded and every page returned 401.
+
 - Sign-in form in front of the UI. Chrome was showing Kopia's `Missing credentials.` page and never the basic-auth prompt. NPM host 51 now forwards to `kopia-ui-proxy` on port 51516.
 
 ## [0.1.0] — 2026-10-05

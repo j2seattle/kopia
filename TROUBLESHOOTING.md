@@ -31,6 +31,10 @@ https://kopia.yingson.com now serves a sign-in form (CT 135, `kopia-ui-proxy` on
 
 Reload the tab. The old 401 text is not the form.
 
+## Snapshots says "Request failed with status code 401"
+
+The shell loaded, and the API call did not. Kopia requires a CSRF cookie plus the `X-Kopia-Csrf-Token` header on every API call. Reload https://kopia.yingson.com/snapshots after signing in. A reload picks up both. If it still fails, sign out by opening https://kopia.yingson.com/logout and sign in again.
+
 ## The prompt appears and then says "Access denied."
 
 The username for the web UI is `kopia`, not `laptop@jason`. `laptop@jason` is the laptop backup client. The repository encryption password is a third value and is not the web login.

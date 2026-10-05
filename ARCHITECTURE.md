@@ -211,7 +211,7 @@ Longer steps are in [docs/RUNBOOK.md](docs/RUNBOOK.md).
 | Scratch restore of CT 135 | Deferred | Waiting on a PBS snapshot of this guest |
 | External-drive repository | Deferred | The drive has to be attached |
 | Laptop Kopia client | Deferred | Not installed |
-| GitHub mirror | Deferred | Not created in this pass |
+| GitHub mirror | Met | Jason confirmed the Gitea push mirror on 2026-10-05 |
 | Dashlane copy of the repo encryption password | Deferred | Jason has not confirmed that item |
 | NPM, Tailscale, cloudflared, and the remaining service paths | Deferred | First four clients are enrolled |
 

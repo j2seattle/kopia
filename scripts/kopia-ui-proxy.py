@@ -253,6 +253,14 @@ class Handler(BaseHTTPRequestHandler):
         accept = self.headers.get("Accept")
         if accept:
             headers["Accept"] = accept
+        # Kopia binds API calls to a CSRF token in the page and cookies set with it.
+        # Dropping either one makes every page after sign-in return 401.
+        cookie = self.headers.get("Cookie")
+        if cookie:
+            headers["Cookie"] = cookie
+        csrf = self.headers.get("X-Kopia-Csrf-Token")
+        if csrf:
+            headers["X-Kopia-Csrf-Token"] = csrf
         conn = http.client.HTTPSConnection(UPSTREAM_HOST, UPSTREAM_PORT, context=CTX, timeout=300)
         try:
             conn.request(self.command, self.path, body=body, headers=headers)
@@ -265,6 +273,8 @@ class Handler(BaseHTTPRequestHandler):
             if key.lower() in SKIP_RESPONSE_HEADERS:
                 continue
             self.send_header(key, value)
+        for cookie in resp.headers.get_all("Set-Cookie") or []:
+            self.send_header("Set-Cookie", cookie)
         self.send_header("Cache-Control", "no-store")
         upstream_len = resp.headers.get("Content-Length")
         if self.command == "HEAD":
