@@ -1,0 +1,32 @@
+---
+description: Gitea auth identity, HTTPS first-attempt retry, and Proxmox host IP for all Yingson Labs work.
+alwaysApply: true
+---
+
+# Gitea + Proxmox (Yingson Labs)
+
+Applies to **every** Yingson Labs repo, not only the current project.
+
+## Gitea identity
+
+| Context | Value |
+|---|---|
+| Web login email | `jasonj.seattle@gmail.com` |
+| Gitea username | `jason` |
+| Git HTTPS username | `jason` (not the email) |
+| Git HTTPS password | PAT (`write:repository`) — never the web password |
+| Git SSH | User `git`, port **2222**, key `~/.ssh/id_ed25519_lab` |
+
+## HTTPS first attempt often fails
+
+`git fetch` / `git push` / `git ls-remote` to `gitea.yingson.com` often returns `Failed to authenticate user` on the **first** try and succeeds on the **second**. Retry the exact same command once before treating it as a bad PAT or rotating credentials. Do not spam new tokens.
+
+Preferred laptop remote: HTTPS `https://gitea.yingson.com/jason/<repo>.git` (same as arr-stack). SSH `:2222` is optional and only works after the lab key is **Verify**d in Gitea → Settings → SSH keys.
+
+## Proxmox
+
+- Hostname `proxmox`, IP **`192.168.30.209`**
+- **Never** use `192.168.20.109` (stale SSH `Host proxmox` / old docs)
+- Laptop SSH: **`jason@192.168.30.209`** (`ssh proxmox`) with `~/.ssh/id_ed25519_lab`. Passwordless sudo. Use `sudo pct list` / `sudo pct enter <id>`. Do not SSH as `root` from the laptop.
+- **Guest SSH:** any service repo with a guest must have passwordless `jason@` from the laptop. Guest `authorized_keys` (1a) **and** laptop `Host <slug> <IP>` with `IdentityFile ~/.ssh/id_ed25519_lab` and `IdentitiesOnly yes` (1c). Verify: `ssh -o BatchMode=yes <slug> whoami`. Key-on-guest without the Host block still prompts for a password on Windows. Do not set a `jason` password. `pct exec` is fallback only.
+- OpenClaw is **CT102** (`openclaw.yingson.com`) at **192.168.30.213** (`ssh openclaw`)

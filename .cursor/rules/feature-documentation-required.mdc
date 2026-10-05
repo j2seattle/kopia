@@ -1,0 +1,35 @@
+---
+description: Require documentation updates whenever shipping or changing a feature (WavePoint + Yingson Labs). No feature ships without docs.
+alwaysApply: true
+---
+
+# Feature documentation required
+
+**No feature ships without documentation.** When adding or materially updating a capability, update docs in the **same session** (same commit / PR batch) — not as a follow-up.
+
+## Minimum updates by change type
+
+| Change | Document |
+|--------|----------|
+| New command, API route, UI flow, Discord behavior | README + CHANGELOG + ARCHITECTURE (and `docs/reference/` if a stable contract) |
+| Changed behavior users or ops will notice | CHANGELOG + update affected living docs |
+| New or renamed env / config keys | `config.env.example` or `.env.example` + ARCHITECTURE § env |
+| New integration or reaction map | Reference spec + README summary |
+
+## Gate before commit / push / deploy
+
+Do **not** commit, push, or ask Jason to deploy until:
+
+- [ ] CHANGELOG (or `docs/CHANGELOG.md`) has prepend-only bullets for the work
+- [ ] At least one durable doc beyond code comments describes the feature (README, ARCHITECTURE, PRD, API, RUNBOOK, or `docs/reference/`)
+- [ ] CURSOR.md updated if commands, deploy state, or handover changed
+- [ ] Config templates updated if env contract changed
+
+## Where to look (by org)
+
+| Org | Canonical standards |
+|-----|---------------------|
+| **Yingson Labs** | `lab-standards/docs/documentation-standards.md` § Feature documentation |
+| **WavePoint** | `docs/documentation-standards.md` § Feature documentation |
+
+If unsure which files to touch, read the repo’s `docs/documentation-standards.md` agent checklist and `docs/README.md` index (if present).

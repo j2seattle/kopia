@@ -1,0 +1,202 @@
+---
+description: Yingson Labs environment context and rules. Auto-loads for all files in Yingson Labs repos. Provides host registry, service standards, git workflow, and lab-specific never-do rules.
+globs: 
+alwaysApply: true
+---
+
+# Yingson Labs — Environment Context
+
+This file is present in all Yingson Labs repositories. It provides environment-specific context and rules that extend the global Cursor rules.
+
+**Canonical standards:** `lab-standards/docs/documentation-standards.md` (or Gitea: `gitea.yingson.com/jason/lab-standards`)
+
+> **`lab-standards` is the source of truth for all Yingson Labs documentation, and this repo is a CHILD of it.**
+> Read `lab-standards/LAB-DOC-CONTRACT.md` — it defines who owns what, what you must push **up** to `lab-standards` in the same session, what flows **down**, and the rule that **conflicts stop work and get raised to Jason rather than guessed**.
+> The `lab-doc-contract.mdc` rule in this same folder carries the working summary. Scope: Yingson Labs only — **not WavePoint**.
+
+---
+
+## Environment Identity
+
+- **Organization:** Yingson Labs
+- **Type:** Self-hosted home lab on Proxmox
+- **Philosophy:** Local-first, self-hosted over cloud, security over convenience, no snowflakes, everything documented to junior-admin runbook level
+- **Git source of truth:** Gitea at `gitea.yingson.com` (internal) / `192.168.30.51`
+- **GitHub mirror:** `github.com/j2seattle` (push mirror — Gitea is authoritative)
+- **Git identity:** `jasonj.seattle@gmail.com` / Jason Johnson
+- **Gitea username:** `jason` (web login email is `jasonj.seattle@gmail.com`; HTTPS git username is `jason`, password is a PAT)
+- **Gitea HTTPS quirk:** first `fetch`/`push` often fails auth; **retry once** before rotating the PAT
+- **Proxmox host:** `proxmox` at **192.168.30.209** (never `192.168.20.109`)
+- **Proxmox SSH:** `ssh proxmox` or `jason@192.168.30.209` with `~/.ssh/id_ed25519_lab` (NOPASSWD sudo; `sudo pct …`). Do not SSH as `root` from the laptop.
+- **Guest SSH:** if this repo has a guest, `ssh -o BatchMode=yes <slug> whoami` must return `jason`. That needs the lab key on the guest **and** a laptop Host block (`IdentityFile ~/.ssh/id_ed25519_lab`, `IdentitiesOnly yes`). Do not set a `jason` password. Canonical: `lab-standards/LAB-STANDARDS.md` (Passwordless SSH).
+
+---
+
+## Host & Service Registry
+
+Reference this registry when generating configs, SSH commands, runbooks, or documentation. Never invent IPs or hostnames.
+
+### Network Layout
+- **VLAN Home:** 192.168.5.x
+- **VLAN IoT / Lab:** 192.168.30.x (lab services live here)
+- **VLAN Guest:** 192.168.99.x
+
+### Running Services
+| Service | Host/CT | IP | Notes |
+|---|---|---|---|
+| AdGuard Home | CT | 192.168.30.242 | Internal DNS |
+| Nginx Proxy Manager (NPM) | CT | 192.168.30.182 | Reverse proxy |
+| Immich | CT | 192.168.30.98 | Photo storage |
+| Uptime Kuma | CT | 192.168.30.130 | Monitoring |
+| Home Assistant | VM | 192.168.5.20 | On Home VLAN |
+| OpenWebUI | CT | 192.168.30.123 | LLM interface |
+| Homarr | CT | 192.168.30.107 | Dashboard |
+| Gitea | CT110 | 192.168.30.51 | Source of truth |
+| Ollama | CT112 | 192.168.30.104 | LLM inference |
+| Proxmox Backup Server | VM111 | 192.168.30.157 | Backups |
+| Tailscale | CT115 | 192.168.30.73 | Remote access (yingson-router) |
+| Cloudflare Tunnel | CT116 | 192.168.30.70 | External HTTP access (yingson-labs tunnel) |
+| ComfyUI | CT114 | 192.168.30.21 | Image generation |
+| discord-imagegen-pipeline | CT113 | 192.168.30.251 | Discord bot + pipeline |
+| Seafile | CT124 | 192.168.30.22 | Family file sync — `ssh seafile` |
+
+### External Access
+- **Tailscale:** Admin/family access. Advertises subnets `.30.0/24` and `.5.0/24`. Required for git push to Gitea when off home LAN.
+- **Cloudflare Tunnel (yingson-labs):** Lab user access via Cloudflare Access. Exposes: `gitea.yingson.com`, `chatgpt.yingson.com` (OpenWebUI), `uptime.yingson.com`, `lab.yingson.com`
+
+---
+
+## Lab-Specific Rules
+
+### Proxmox
+- **NEVER** modify any Proxmox configuration file without Jason's explicit written approval in this chat session.
+- Before proposing any Proxmox change, state: what file is changing, what the current value is (if known), what the new value will be, and why the change is necessary.
+- SSH to the hypervisor as **`jason@192.168.30.209`** (`ssh proxmox`) using `id_ed25519_lab`. Then `sudo pct list` / `sudo pct enter <id>`. Do not use `root@` from the laptop.
+- Proxmox web UI: accessible via Tailscale at **192.168.30.209**. Do not expose Proxmox to the internet.
+
+### Service Management
+- **NEVER** restart any service (systemctl, docker restart, PM2, etc.) automatically.
+- When a restart is needed, provide the exact command block, explain what will restart, and note any expected downtime or impact.
+- Always verify service status after proposing a restart: provide the status-check command alongside the restart command.
+
+### Git Workflow (Yingson Labs)
+- **Source of truth:** Gitea. Push to Gitea first. GitHub mirror is secondary.
+- **Remote chain:** `local → git push → Gitea → (mirror) GitHub`
+- **Deployment chain:** After push, SSH to the host CT and run `git pull`
+- **SSH for deployment:** Use Cursor integrated terminal (WSL2). Tailscale must be connected if off home LAN.
+
+Standard deployment sequence after a push:
+```bash
+# 1. Push to Gitea (and mirror to GitHub)
+git push origin main
+
+# 2. SSH to the target host (replace IP with CT IP from registry above)
+ssh jason@192.168.30.XX
+
+# 3. On the host, pull the latest
+cd /path/to/service
+git pull
+
+# 4. If service restart is needed — Cursor will provide exact command. Jason runs it.
+```
+
+### Documentation Requirements
+Every Yingson Labs repo must have and keep current:
+- `README.md` — what this service is, how to deploy it, how to verify it's working
+- `ARCHITECTURE.md` — 14 required sections (see below)
+- `CHANGELOG.md` — all changes with audience tags; **prepend only, never delete**
+- `CURSOR.md` — current project state for Cursor agent sessions
+- `docs/documentation-standards.md` — extends lab-standards canonical doc rules
+- `docs/setup-gitea-git.md` — laptop → Gitea workflow
+- `docs/runbook.md` or `docs/runbooks/` — operational runbook
+- `docs/decisions/` — ADR files for significant architectural decisions
+- `.cursor/rules/feature-documentation-required.mdc` — **no feature ships without docs**
+
+**No feature ships without documentation.** New or materially changed features require README + CHANGELOG + ARCHITECTURE (or reference doc) in the same commit batch. See `lab-standards/docs/documentation-standards.md` § Feature documentation requirement.
+
+**End of session:** update CHANGELOG + CURSOR.md + README/ARCHITECTURE as needed. See `lab-standards/docs/documentation-standards.md`.
+
+### Required ARCHITECTURE.md Sections (Yingson Labs)
+Every ARCHITECTURE.md must contain these 14 sections:
+1. Service Overview
+2. Components & Dependencies
+3. Network Architecture (IP addresses, ports, VLANs)
+4. Data Flow
+5. File & Directory Structure
+6. Configuration Reference
+7. Environment Variables
+8. Deployment Process
+9. Backup & Recovery
+10. Monitoring & Alerting
+11. Security Considerations
+12. Known Issues & Limitations
+13. Related Services & Integrations
+14. Change History (link to CHANGELOG.md)
+
+---
+
+## NAS Storage Reference
+- **Ugreen NAS:** Mounted via NFS
+- **NAS path pattern for media/data:** `/mnt/nas/[category]/[service]/`
+- **Never store large model files or media in the git repo.** Reference NAS paths instead.
+
+---
+
+## Repo Structure Standard
+
+Every Yingson Labs repo must follow this structure:
+
+```
+service-name/
+├── .cursor/
+│   └── rules/
+│       ├── yingson-labs-context.mdc   ← environment + git + never-do
+│       └── feature-documentation-required.mdc  ← no feature without docs
+├── .gitattributes
+├── .gitignore
+├── .env.example                        ← committed, no real values
+├── CURSOR.md                           ← session briefing doc
+├── README.md
+├── ARCHITECTURE.md
+├── CHANGELOG.md
+├── docs/
+│   ├── documentation-standards.md      ← extends lab-standards
+│   ├── setup-gitea-git.md
+│   ├── runbook.md (or runbooks/)
+│   └── decisions/
+│       └── ADR-001-[decision-name].md
+├── scripts/
+│   └── (operational scripts, clearly named)
+└── src/ (or service-appropriate structure)
+```
+
+---
+
+## Uptime Kuma Monitoring Standard
+
+Every new service added to the lab must have a corresponding Uptime Kuma monitor. When creating or modifying a service, prompt Jason to add a monitor with:
+- Monitor type (HTTP/keyword, TCP port, etc.)
+- Target URL or IP:port
+- Alert notification: Discord **`#alerts`** channel (Yingson Labs — do **not** use `#service-alerts`, that is WavePoint)
+- Check interval: 60 seconds (standard)
+- Down alert threshold: 2 consecutive failures
+
+---
+
+## Security Standards
+
+- All lab services use NPM for SSL termination where applicable
+- SSH access to hosts uses key-based auth only — never propose password-based SSH
+- Cloudflare Access (Rule Group: Lab Users) gates all externally-exposed services
+- Do not generate configs that expose any service directly to the internet without Cloudflare or VPN in front of it
+
+---
+
+## Tone for Generated Documentation
+
+Write as if explaining to a junior sysadmin who:
+- Knows what Linux, Docker, and git are
+- Has never seen this specific service before
+- Will need to troubleshoot it at 2am without asking anyone
+
+Include: what each config value does, what "healthy" looks like, what common failures look like and how to fix them.

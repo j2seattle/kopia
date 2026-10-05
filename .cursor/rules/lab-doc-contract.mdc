@@ -1,0 +1,105 @@
+---
+description: Yingson Labs documentation contract. lab-standards is the source of truth; every other lab repo is a child. Defines what flows up, what flows down, and the mandatory stop-and-alert rule for conflicts. Applies to all Yingson Labs repos — NOT WavePoint.
+alwaysApply: true
+---
+
+# Lab documentation contract (Yingson Labs)
+
+**`lab-standards` is the source of truth for all Yingson Labs documentation.** Every other Yingson Labs repo is a **child**. Children extend it; they never contradict it.
+
+Full contract: `lab-standards/LAB-DOC-CONTRACT.md` · Gitea: `gitea.yingson.com/jason/lab-standards`
+
+> **Does NOT apply to WavePoint.** WavePoint has its own conventions, its own `DEC-###` sequence, GitHub-first paths, and `#service-alerts` (never `#alerts`). Never flow WavePoint decisions into `LAB-DECISIONS.md`.
+
+---
+
+## 🛑 The one rule that overrides convenience
+
+**If two sources disagree, or ownership is unclear, or a slug/enum does not resolve — STOP and ALERT JASON. Do not guess. Do not silently pick a side.**
+
+Guessing is faster and usually looks right. That is the problem. A verification pass in August 2026 found ten factual conflicts (`C-1`–`C-10` in `SERVICE-SLUG-REGISTRY.md`); **several would have been resolved wrongly by a confident guess** — including C-1, where every document said Plex and the answer was Jellyfin.
+
+Continue any work that does not depend on the answer. Record both sides next to the data with a `⚠️ CONFLICT` block. Then ask:
+
+```
+⚠️ CONFLICT — needs your decision
+**What disagrees:** A says <X>; B says <Y>
+**Why it matters:** <what breaks if we pick wrong>
+**How to settle it:** <specific command / UI page / question>
+**What I did instead:** recorded both, changed nothing.
+```
+
+---
+
+## Session start
+
+1. Read this repo's `CLAUDE.md` / `CURSOR.md`.
+2. Check the **sync receipt** — the `lab-standards` commit this repo last reconciled against. If it moved, read `lab-standards/CHANGELOG.md` since that SHA **before doing anything else**.
+3. If touching services: read `SERVICE-INVENTORY.md` and `SERVICE-SLUG-REGISTRY.md`.
+
+## Flow UP — update `lab-standards` in the SAME session
+
+| Happened here | Update there |
+|---|---|
+| New service (deployed **or planned**) | `SERVICE-SLUG-REGISTRY.md` + `SERVICE-INVENTORY.md` |
+| IP / port / guest ID / hostname changed | `SERVICE-INVENTORY.md` + `LAB-STANDARDS.md` §4 |
+| DNS or NPM entry changed | `LAB-STANDARDS.md` §4 |
+| Status changed (`planned`→`in-progress`→`active`→`abandoned`) | `SERVICE-INVENTORY.md` |
+| Dependency added/removed | `SERVICE-DEPENDENCIES.md` + frontmatter **both directions** |
+| API / auth / MCP / tier changed | `SERVICE-INVENTORY.md` Table 2, CHANGELOG `[agent-context]` |
+| **Any** diagnosed or addressed issue (single-service too) | `INCIDENT-LOG.md` **and** this repo `docs/incidents/INC-YYYYMMDD-##.md` — do not ask first (LAB-DEC-023 / LAB-DEC-025) |
+| Failure pattern owned by **no single** service | `TROUBLESHOOTING-CROSS-SERVICE.md` |
+| Decision affecting more than this service | `LAB-DECISIONS.md` as `LAB-DEC-###` |
+| Needed a new enum value | `GLOSSARY.md` — **add there FIRST, then use it** |
+
+**Never invent a slug or enum value locally.** Register it in `lab-standards` first. An unregistered slug is a broken graph edge that nothing warns you about; a non-canonical enum silently drops the doc out of every rollup query.
+
+## Flow DOWN — when `lab-standards` changes
+
+Frontmatter schema, glossary values, slug renames, tier changes, new required files, new protected invariants → apply here, on the next substantive session at the latest.
+
+## Owned by `lab-standards` — never redefine locally
+
+Slugs · service inventory · dependency graph · permission tiers · glossary · lab decisions · cross-service incidents & troubleshooting · frontmatter schema · vault convention · baselines *schema* · network/DNS/backup standards · protected invariants · doc templates
+
+## Owned by this repo — `lab-standards` only summarizes
+
+Service `ARCHITECTURE.md` · measured `BASELINES.md` values · service-specific troubleshooting · runbooks · `docs/incidents/INC-*.md` pointers · config & env templates · project `DEC-###` · this repo's `CHANGELOG.md`
+
+## API/MCP first
+
+**If a service has an API or an MCP server, use it** — do not click through a UI or copy/paste by hand. `SERVICE-INVENTORY.md` **Table 2** records the API type, auth method, and MCP status for every service. Check it before doing anything repetitive manually.
+
+Record what you used in the service's **API & Automation Profile** and in the runbook step it replaced. If a field says `(verify)`, resolve it — an unknown interface is a task you will do by hand forever.
+
+**This does not change what is allowed.** `read-only` via API: use freely. `remediate`: same approval rules, same circuit breaker. `destructive`: still human only. **A convenient API is not an argument for a higher tier.**
+
+## When a doc and the live system disagree
+
+**The live system wins. The document is a bug.** Fix it, and say in the CHANGELOG that it was wrong — a silent correction loses the signal that the process failed.
+
+---
+
+## 🛑 Protected invariant — the NAS is on a different VLAN
+
+The Ugreen NAS is at **`192.168.5.180` on the Home VLAN**; every service is on IoT (`192.168.30.0/24`), default-deny between them. **One UniFi allow rule carries all NFS traffic and the PBS datastore.**
+
+**Never** delete, narrow, or reorder an inter-VLAN rule involving `192.168.5.180` or NFS without confirming what it carries. Breaking it produces **no firewall error** — just media, photos, and every backup failing at once, looking like unrelated service faults. `destructive` tier, human only.
+
+---
+
+## Session-end gate
+
+Do not report complete, commit, or advise deploying until:
+
+- [ ] **`python ../lab-standards/management/validate-docs.py --repo .` exits 0**. This replaces hand-checking slugs, enums, `parent_doc`, and secrets
+- [ ] Any flow-up trigger fired → **`lab-standards` updated this session**
+- [ ] `depends_on` / `depended_on_by` declared **both directions**
+- [ ] Any diagnosed/addressed issue → lab `INCIDENT-LOG.md` **and** `docs/incidents/INC-*.md` pointer, written **without asking**
+- [ ] Any fix → `TROUBLESHOOTING.md` entry, this session
+- [ ] CHANGELOG prepended in **both** repos if both changed
+- [ ] **Sync receipt updated** with current `lab-standards` SHA
+- [ ] No credentials — reference by `vault://` path only
+- [ ] **Conflicts raised, not resolved**
+
+**A two-repo change is one unit of work.** Both commit and push before it is done. Push order: **child repo first, then `lab-standards`** — the lab-wide view must never be ahead of the reality it describes.
