@@ -3,7 +3,7 @@ title: Architecture — kopia
 version: 0.1.0
 status: active
 last_edited_by: Cursor Grok
-last_edited_date: 2026-10-05
+last_edited_date: 2026-10-07
 parent: README.md
 children: []
 siblings: [CHANGELOG.md, CURSOR.md, BASELINES.md, TROUBLESHOOTING.md]
@@ -18,7 +18,7 @@ depends_on: []
 depended_on_by: []
 agent_context: true
 permission_tier: destructive
-last_verified: 2026-10-05
+last_verified: 2026-10-07
 ---
 
 # Architecture — Kopia
@@ -210,7 +210,7 @@ Longer steps are in [docs/RUNBOOK.md](docs/RUNBOOK.md).
 |---|---|---|
 | Scratch restore of CT 135 | Deferred | Waiting on a PBS snapshot of this guest |
 | External-drive repository | Deferred | The drive has to be attached |
-| Laptop Kopia client | Deferred | Not installed |
+| Laptop Kopia client | Met | Installed as `laptop@jason`. Cursor `mcps` and `hooks` are folder sources as of 2026-10-07. `mcps` ignores `comfy-mcp/`. |
 | GitHub mirror | Met | Jason confirmed the Gitea push mirror on 2026-10-05 |
 | Dashlane copy of the repo encryption password | Deferred | Jason has not confirmed that item |
 | NPM, Tailscale, cloudflared, and the remaining service paths | Deferred | First four clients are enrolled |

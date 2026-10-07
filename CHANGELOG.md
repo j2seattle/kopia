@@ -3,7 +3,7 @@ title: Changelog — kopia
 version: 0.1.0
 status: active
 last_edited_by: Cursor Grok
-last_edited_date: 2026-10-05
+last_edited_date: 2026-10-07
 parent: README.md
 children: []
 siblings: [README.md, CURSOR.md, ARCHITECTURE.md]
@@ -23,6 +23,10 @@ last_verified: 2026-10-05
 # Changelog
 
 ## [Unreleased]
+
+- Discord snapshot failures for a missing path are a client-policy problem. `hooks.json` stays retired. Hermes proposes no server restart for that alert. The steps are in TROUBLESHOOTING.md.
+
+- Laptop client `laptop@jason` snapshots `C:\Users\thedu\.cursor\mcps\` and `C:\Users\thedu\.cursor\hooks\` as folders, every 24h. `mcps` ignores `comfy-mcp/`. The per-file env policies and the missing `hooks.json` source are removed. Older snapshots of those files stay until retention.
 
 - The sign-in proxy now forwards Kopia's CSRF cookies and `X-Kopia-Csrf-Token`. Without them the UI shell loaded and every page returned 401.
 

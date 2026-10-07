@@ -3,7 +3,7 @@ title: Troubleshooting — kopia
 version: 0.1.0
 status: active
 last_edited_by: Cursor Grok
-last_edited_date: 2026-10-05
+last_edited_date: 2026-10-07
 parent: README.md
 children: []
 siblings: [ARCHITECTURE.md, CURSOR.md]
@@ -46,3 +46,11 @@ Kuma 113 treats HTTP 401 as up. A 401 means NPM reached Kopia and Kopia asked fo
 ## A client backup fails fingerprint check
 
 Enrolled clients pin the self-signed certificate on `192.168.30.32:51515`. Do not point them at `https://kopia.yingson.com`. That name presents the lab wildcard certificate.
+
+## Discord says a snapshot failed because the file is missing
+
+The Kopia Backup post names the path, then `GetFileAttributesEx` or "The system cannot find the file specified." That failure happens on the client, before a pack is written. Restarting `kopia-server` on CT 135 does not create the file.
+
+`C:\Users\thedu\.cursor\hooks.json` is not a source. The file was deleted. The laptop policy has to drop that source. The folder source is `C:\Users\thedu\.cursor\hooks\`. Leave the 2026-10-06 snapshot until retention. Do not recreate `hooks.json`. Do not delete snapshots to clear the alert.
+
+Hermes reads this alert in `#alerts` and posts the checkup in `#hermes-sre`. For a missing path the proposal is none. The only Kopia case it will ask to start is CT 135, and only when the alert is a connection failure and that guest is stopped.
