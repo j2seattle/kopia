@@ -24,6 +24,8 @@ last_verified: 2026-10-05
 
 ## [Unreleased]
 
+- Readiness is R3. PBS snapshot `ct/135/2026-10-07T09:12:34Z` restored to scratch CT 198 with the repository unmounted and the NIC down, then destroyed. Live CT 135 stayed up. Not R4. The repo password is still not confirmed in Dashlane, and there is no external-drive copy.
+
 - Discord snapshot failures for a missing path are a client-policy problem. `hooks.json` stays retired. Hermes proposes no server restart for that alert. The steps are in TROUBLESHOOTING.md.
 
 - Laptop client `laptop@jason` snapshots `C:\Users\thedu\.cursor\mcps\` and `C:\Users\thedu\.cursor\hooks\` as folders, every 24h. `mcps` ignores `comfy-mcp/`. The per-file env policies and the missing `hooks.json` source are removed. Older snapshots of those files stay until retention.

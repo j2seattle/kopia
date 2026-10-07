@@ -23,7 +23,7 @@ last_verified: 2026-10-07
 
 # Architecture — Kopia
 
-**Slug:** `kopia` · **Status:** `active` · **Host:** CT 135 / 192.168.30.32 · **Readiness:** R2
+**Slug:** `kopia` · **Status:** `active` · **Host:** CT 135 / 192.168.30.32 · **Readiness:** R3
 
 ---
 
@@ -136,7 +136,7 @@ Changing the unit or `/etc/kopia/server.env` requires `systemctl daemon-reload` 
 
 ## 10. Backup & Recovery
 
-This service is the file-level backup system. Its own guest disk is in the nightly PBS job. A scratch restore of CT 135 has not been done. That is Gate 7, still open.
+This service is the file-level backup system. Its own guest disk is in the nightly PBS job (`all 1`). On 2026-10-07 `ct/135/2026-10-07T09:12:34Z` was restored unprivileged to scratch CT 198. The NFS repository mount was removed before boot, the NIC was down, and the copy printed `scratch` with `kopia-server` enabled. The scratch guest was destroyed. Live CT 135 stayed running and `kopia-server` stayed active. The repository itself was not restored. Not R4. The Dashlane copy of the repo encryption password is still unconfirmed.
 
 Same-night restore proofs on 2026-10-03 compared checksums for the server canary, Kuma's sqlite backup, Proxmox `storage.cfg`, the PBS config tree, and AdGuard's yaml. Restore directories were removed afterward.
 
@@ -208,7 +208,7 @@ Longer steps are in [docs/RUNBOOK.md](docs/RUNBOOK.md).
 
 | Item | Status | Why |
 |---|---|---|
-| Scratch restore of CT 135 | Deferred | Waiting on a PBS snapshot of this guest |
+| Scratch restore of CT 135 | Met | `ct/135/2026-10-07T09:12:34Z` to CT 198 on 2026-10-07, then destroyed. The repository was not mounted on the copy |
 | External-drive repository | Deferred | The drive has to be attached |
 | Laptop Kopia client | Met | Installed as `laptop@jason`. Cursor `mcps` and `hooks` are folder sources as of 2026-10-07. `mcps` ignores `comfy-mcp/`. |
 | GitHub mirror | Met | Jason confirmed the Gitea push mirror on 2026-10-05 |

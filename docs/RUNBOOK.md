@@ -1,3 +1,26 @@
+---
+title: Runbook — kopia
+version: 0.1.0
+status: active
+last_edited_by: Cursor Grok
+last_edited_date: 2026-10-07
+parent: ARCHITECTURE.md
+children: []
+siblings: [TROUBLESHOOTING.md]
+audience: ops
+tags: [yingson-labs, kopia, runbook]
+summary: "Sign-in, restart, and the 2026-10-07 scratch restore for the Kopia guest."
+doc_type: runbook
+scope: service
+service_name: kopia
+parent_doc: lab-standards/ARCHITECTURE.md
+depends_on: []
+depended_on_by: []
+agent_context: true
+permission_tier: remediate
+last_verified: 2026-10-07
+---
+
 # Runbook — kopia
 
 ## Sign in
@@ -23,6 +46,10 @@ Then confirm `systemctl is-active kopia-server` and `systemctl is-active kopia-u
 ## Where the repository is
 
 Guest path `/mnt/nas`. NAS path `/volume1/proxmox/backups/kopia`. Do not delete that directory. It is the only copy until the external-drive repository exists.
+
+## Scratch restore
+
+On 2026-10-07, `ct/135/2026-10-07T09:12:34Z` was restored to CT 198. From the laptop this is SSH as `jason@proxmox`, and `pct` needs `sudo`. The copy was unprivileged, hostname `scratch`, onboot 0, NIC down, and `mp0` removed before boot so it could not mount the live repository. It printed `scratch`. `kopia-server` was enabled and `/mnt/nas` was not mounted. CT 198 was destroyed. Live CT 135 stayed running. This did not restore the repository.
 
 ## Clients
 
