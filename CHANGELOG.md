@@ -24,7 +24,9 @@ last_verified: 2026-10-05
 
 ## [Unreleased]
 
-- Readiness is R3. PBS snapshot `ct/135/2026-10-07T09:12:34Z` restored to scratch CT 198 with the repository unmounted and the NIC down, then destroyed. Live CT 135 stayed up. Not R4. The repo password is still not confirmed in Dashlane, and there is no external-drive copy.
+- Jason confirmed the laptop user password, the admin password, and the repo encryption password are in Dashlane. UniFi reservation `kopia-LXC` is verified. Package check: installed and candidate are 0.23.1, so the hold stays. Baseline at 17:39 PDT: process 0% CPU, 183 MB resident, guest 170 MiB used.
+
+- Readiness is R3. PBS snapshot `ct/135/2026-10-07T09:12:34Z` restored to scratch CT 198 with the repository unmounted and the NIC down, then destroyed. Live CT 135 stayed up. Not R4. The repo password is in Dashlane. There is still no external-drive copy.
 
 - Discord snapshot failures for a missing path are a client-policy problem. `hooks.json` stays retired. Hermes proposes no server restart for that alert. The steps are in TROUBLESHOOTING.md.
 

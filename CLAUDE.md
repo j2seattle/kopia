@@ -37,7 +37,7 @@ Contract: [`lab-standards/LAB-DOC-CONTRACT.md`](https://gitea.yingson.com/jason/
 | **lab-standards commit** | `3bc5d70` |
 | **lab-standards version** | 1.9.37, plus uncommitted 2026-10-05 notes |
 | **Reconciled by** | Cursor |
-| **Open items flowing up** | Gate 7, external-drive repo, GitHub mirror, Dashlane confirmation of the repo password |
+| **Open items flowing up** | External-drive repo. Gate 7, the GitHub mirror, and the Dashlane repo password are done |
 
 ## Read order
 
